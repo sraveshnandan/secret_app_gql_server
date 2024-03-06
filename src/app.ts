@@ -1,0 +1,27 @@
+import { ApolloServer } from "@apollo/server";
+import { startStandaloneServer } from "@apollo/server/standalone";
+import mongoose from "mongoose";
+import { resolvers, typeDefs } from "./graphql";
+import { MongoDbUri, Port } from "./config";
+
+const server = new ApolloServer({
+  typeDefs,
+  resolvers,
+});
+
+const startServer = async () => {
+  mongoose
+    .connect(MongoDbUri)
+    .then(async (con) => {
+      console.log(`📡 Databse is connected to : ${con.connection.host}`);
+      const { url } = await startStandaloneServer(server, {
+        listen: { port: Number(Port) },
+      });
+      console.log(`🔗 Graphql Server is running on :${url}`);
+    })
+    .catch((error) =>
+      console.log(`Unable to connect to the database due to : ${error.message}`)
+    );
+};
+
+startServer();
