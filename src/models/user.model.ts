@@ -22,22 +22,23 @@ const UserSchema = new Schema(
       minlength: [10, "Phone number must be at least 10 characters long."],
     },
     avatar: {
-      public_id: String,
-      url: String,
+      public_id: { type: String, default: "Sample id." },
+      url: { type: String, default: "Sample id." },
     },
-    shops:{
-      type:Schema.Types.ObjectId,
-      ref:"Shop"
+    shops: [
+      {
+        type: Schema.Types.ObjectId,
+        ref: "Shop",
+      },
+    ],
+    isShopOwner: {
+      type: Boolean,
+      default: false,
     },
-    isShopOwner:{
-      type:Boolean,
-      default:false
+    isAdmin: {
+      type: Boolean,
+      default: false,
     },
-    isAdmin:{
-      type:Boolean,
-      default:false
-    }
-
   },
   { timestamps: true }
 );

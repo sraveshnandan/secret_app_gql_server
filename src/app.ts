@@ -16,6 +16,9 @@ const startServer = async () => {
       console.log(`📡 Databse is connected to : ${con.connection.host}`);
       const { url } = await startStandaloneServer(server, {
         listen: { port: Number(Port) },
+        context:async ({req, res})=>{
+          return req.headers
+        }
       });
       console.log(`🔗 Graphql Server is running on :${url}`);
     })
