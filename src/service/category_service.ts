@@ -7,7 +7,9 @@ export const createCategory = async (data: { name: string; token: string }) => {
   try {
     const { name, token } = data;
     const res = await VerifyToken(token);
+    console.log(res)
     const user = JSON.parse(JSON.stringify(res)).user;
+    console.log(user)
     if (user.isAdmin !== true) {
       return new GraphQLError("You are not authorise  to perform this task.");
     }

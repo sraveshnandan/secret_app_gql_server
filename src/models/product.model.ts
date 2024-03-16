@@ -38,10 +38,12 @@ const ProductSchema = new Schema(
         url: String,
       },
     ],
-    category: {
-      type: Schema.Types.ObjectId,
-      ref: "Category",
-    },
+    category: [
+      {
+        type: Schema.Types.ObjectId,
+        ref: "Category",
+      },
+    ],
     original_price: {
       type: Number,
       required: [true, "Product original_price is required."],

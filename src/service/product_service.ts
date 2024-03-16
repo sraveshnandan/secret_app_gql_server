@@ -29,7 +29,7 @@ export const createProduct = async (data: any) => {
 
 export const getAllProduct = async () => {
   try {
-    const products = await Product.find({}).sort({ createdAt: -1 });
+    const products = await Product.find({}).sort({ createdAt: -1 }).populate("owner reviews  likes");
     if (products.length <= 0) {
       return new GraphQLError("No products yet.");
     }
