@@ -22,7 +22,7 @@ export const createShop = async (data: {
     let shop = await Shop.create(newShopData);
     let newuser = await User.findById(user._id);
     newuser.isShopOwner = true;
-    await newuser.save()
+    await newuser.save();
 
     return shop;
   } catch (error) {
@@ -34,7 +34,9 @@ export const getAllShop = async (token: string) => {
   try {
     const res = await VerifyToken(token);
     const user = JSON.parse(JSON.stringify(res)).user;
-    const shops = await Shop.find({}).populate("owner").sort({ createdAt: -1 });
+    const shops = await Shop.find({})
+      .populate("owner products followers")
+      .sort({ createdAt: -1 });
     if (shops.length <= 0) {
       return new GraphQLError("No Shop yet.");
     }
