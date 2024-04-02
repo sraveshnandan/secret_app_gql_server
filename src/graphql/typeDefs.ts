@@ -153,7 +153,7 @@ input AvatarInput {
 input ProfileUpdateInput {
   name:String,
   email:String,
-  phone_no:Int,
+  phone_no:String,
   avatar:AvatarInput,
 }
   input ExtraInput{
