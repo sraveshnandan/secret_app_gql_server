@@ -18,6 +18,8 @@ const createUser = async (data: UserInput) => {
         url: "https://cdn-icons-png.flaticon.com/512/1458/1458201.png",
       };
     }
+    data.phone_no = Number(phone_no);
+    console.log("Phone number", data.phone_no)
     console.log("data", data);
     user = await User.create(data);
     return {

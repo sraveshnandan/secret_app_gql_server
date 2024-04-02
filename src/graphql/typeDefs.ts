@@ -2,6 +2,7 @@ export const typeDefs = `#graphql
 scalar Boolean
 scalar UnSignedInt
 scalar DateTime
+scalar Number
 
 # System Status Type
 type SytemUser {
@@ -41,7 +42,7 @@ type User {
   _id:String!,
   name:String,
   email:String,
-  phone_no:Int,
+  phone_no:Number,
   avatar:Avatar,
   isShopOwner:Boolean,
   isAdmin:Boolean,
@@ -136,7 +137,7 @@ input UserInput {
   email:String!,
   password:String
   avatar:AvatarInput,
-  phone_no:Int
+  phone_no:String
 }
 
 input PasswordInput {
