@@ -5,24 +5,31 @@ import { compareSync } from "bcrypt";
 import jwt from "jsonwebtoken";
 import { JWT_SECRET } from "../config";
 
-export const createUser = async (data: UserInput) => {
+const createUser = async (data: UserInput) => {
   try {
-    const { name, email, password } = data;
+    let { name, email, password, avatar, phone_no } = data;
     let user = await User.findOne({ email });
     if (user) {
       return new GraphQLError("Email already exists.");
     }
+    if (data.avatar === undefined) {
+      data.avatar = {
+        public_id: "dummy_image",
+        url: "https://cdn-icons-png.flaticon.com/512/1458/1458201.png",
+      };
+    }
+    console.log("data", data);
     user = await User.create(data);
     return {
-      message:`Account created : ${user.name} `,
-      user
+      message: `Account created : ${user.name} `,
+      user,
     };
   } catch (error) {
     return new GraphQLError(error.message);
   }
 };
 
-export const loginUser = async (data: UserInput) => {
+const loginUser = async (data: UserInput) => {
   try {
     const { email, password } = data;
 
@@ -47,7 +54,7 @@ export const loginUser = async (data: UserInput) => {
   }
 };
 
-export const VerifyToken = async (token: string) => {
+const VerifyToken = async (token: string) => {
   if (token || token !== "") {
     let decode = jwt.verify(token, JWT_SECRET);
     if (decode) {
@@ -55,7 +62,7 @@ export const VerifyToken = async (token: string) => {
       const id = JSON.parse(data).id;
 
       let user = await User.findById(id);
-      if (!user) {
+      if (!user || user === undefined) {
         return new GraphQLError(
           "Token invalid or expired, Please login again."
         );
@@ -65,40 +72,53 @@ export const VerifyToken = async (token: string) => {
         user,
       };
     }
-    return new GraphQLError("Invalid or expired token.")
+    return new GraphQLError("Invalid or expired token.");
   }
 
-  return  new GraphQLError("Invalid or no token provided.");
+  return new GraphQLError("Invalid or no token provided.");
 };
 
-export const updatePassword = async (data:PasswordInput, token:string)=>{
+const updatePassword = async (data: PasswordInput, token: string) => {
   try {
-    const {oldPassword,newPassword}=data;
+    const { oldPassword, newPassword } = data;
     const res = await VerifyToken(token);
     const id = JSON.parse(JSON.stringify(res)).user._id;
     let user = await User.findById(id).select("+password");
     if (!user) {
-      return new GraphQLError("No user found, please login to contnue.")
+      return new GraphQLError("No user found, please login to contnue.");
     }
-    const isPassOk = compareSync(oldPassword,user.password);
+    const isPassOk = compareSync(oldPassword, user.password);
     if (!isPassOk) {
-      return new GraphQLError("Password didn't matched.")
+      return new GraphQLError("Password didn't matched.");
     }
     if (oldPassword.toString() === newPassword.toString()) {
-      return new GraphQLError("Old password and new password can't be same.")
-      
+      return new GraphQLError("Old password and new password can't be same.");
     }
     user.password = newPassword;
     await user.save();
-    return "Password updated successfully."
+    return "Password updated successfully.";
+  } catch (error) {
+    return new GraphQLError(error.message);
+  }
+};
 
+const updateProfile = async (data) => {
+  try {
+    const { token, details } = data;
+    const res = await VerifyToken(token);
+    const id = JSON.parse(JSON.stringify(res)).user._id;
+    let user = await User.findByIdAndUpdate({_id:id},{...details},{new:true});
+    if (user) {
+      console.log("UPdated User", user)
+      return "Profile Updated successfully."
+    }else{
+      return " Internal server error,Unable to update profile."
+    }
 
   } catch (error) {
-    return new GraphQLError(error.message)
-    
+    return new GraphQLError(error.message);
   }
-}
+};
 
-
-
-// Update Profile function 
+// Update Profile function
+export { createUser, loginUser, VerifyToken, updatePassword, updateProfile };

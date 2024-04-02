@@ -5,6 +5,7 @@ import {
   createUser,
   loginUser,
   updatePassword,
+  updateProfile,
 } from "../service/user_service";
 import {
   createCategory,
@@ -13,8 +14,19 @@ import {
   updateCategory,
 } from "../service/category_service";
 import { isContext } from "vm";
-import { createShop, getAllShop, updateShop } from "../service/shop_service";
-import { createProduct, getAllProduct, updateProduct } from "../service/product_service";
+import {
+  createShop,
+  deleteShop,
+  followUnfollowShop,
+  getAllShop,
+  updateShop,
+} from "../service/shop_service";
+import {
+  createProduct,
+  getAllProduct,
+  likeProduct,
+  updateProduct,
+} from "../service/product_service";
 
 export const resolvers = {
   Query: {
@@ -45,11 +57,11 @@ export const resolvers = {
         return await getAllShop(context.token);
       });
     },
-    products: async (_, {},context)=>{
+    products: async (_, {}, context) => {
       return await Authenticate(context.secret, async () => {
         return await getAllProduct();
       });
-    }
+    },
   },
   Mutation: {
     createUser: async (_, { data }) => {
@@ -57,6 +69,16 @@ export const resolvers = {
     },
     updatePassword: async (_, { data }, context) => {
       await updatePassword(data, context.token);
+    },
+    updateProfile: async (_, { data }, context) => {
+      const payload = {
+        details: data,
+        token: context.token,
+      };
+      return await Authenticate(context.secret, async () => {
+        const res = await updateProfile(payload);
+        return res;
+      });
     },
     // #Category Mutations
     createCategory: async (_, { name }, context) => {
@@ -113,11 +135,21 @@ export const resolvers = {
         token: context.token,
       };
       return await Authenticate(context.secret, async () => {
-        const res = await updateShop(payload);
+        const res = await deleteShop(payload);
         return res;
       });
     },
-    // Product Mutation Resolvers 
+    followShop: async (_, { shopId }, context) => {
+      const payload = {
+        shopId,
+        token: context.token,
+      };
+      return await Authenticate(context.secret, async () => {
+        const res = await followUnfollowShop(payload);
+        return res;
+      });
+    },
+    // Product Mutation Resolvers
     createProduct: async (_, { data }, context) => {
       const payload = {
         ...data,
@@ -128,7 +160,7 @@ export const resolvers = {
         return res;
       });
     },
-    updateProduct: async(_,{data},context)=>{
+    updateProduct: async (_, { data }, context) => {
       const payload = {
         ...data,
         token: context.token,
@@ -137,6 +169,16 @@ export const resolvers = {
         const res = await updateProduct(payload);
         return res;
       });
-    }
+    },
+    likeProduct: async (_, { productId }, context) => {
+      const payload = {
+        productId,
+        token: context.token,
+      };
+      return await Authenticate(context.secret, async () => {
+        const res = await likeProduct(payload);
+        return res;
+      });
+    },
   },
 };

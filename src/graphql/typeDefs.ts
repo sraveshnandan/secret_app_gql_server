@@ -59,7 +59,7 @@ type Shop {
   images:[Avatar],
   products:[Product],
   owner:User,
-  followers:User,
+  followers:[User],
   location:location,
   views:Int,
   address:String
@@ -85,7 +85,7 @@ type Product {
   reviews:[Review],
   extra:[Extra],
   owner:Shop,
-  likes:User,
+  likes:[User],
   views:Int,
   createdAt:DateTime,
   updatedAt:DateTime
@@ -135,7 +135,8 @@ input UserInput {
   name:String,
   email:String!,
   password:String
-  avatar:AvatarInput
+  avatar:AvatarInput,
+  phone_no:Int
 }
 
 input PasswordInput {
@@ -206,7 +207,7 @@ type Mutation {
   # User Mutations
   createUser(data:UserInput):UserResponce
   updatePassword(data:PasswordInput):String
-  updateProfile(data:ProfileUpdateInput):UserResponce
+  updateProfile(data:ProfileUpdateInput):String
   #Category Mutations
   createCategory(name:String!):String,
   updateCategory(id:ID!,name:String!):String
@@ -215,9 +216,11 @@ type Mutation {
   createShop(data:ShopInput):Shop
   updateShop(data:ShopInput):ShopResponce
   deleteShop(id:ID!):String
+  followShop(shopId:ID!):String
   #Product Mutations
   createProduct(data:ProductInput):ProductResponce
   updateProduct(data:ProductInput):ProductResponce
+  likeProduct(productId:ID!):String
 }
 
 `;

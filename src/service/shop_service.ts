@@ -1,10 +1,10 @@
 import { GraphQLError } from "graphql";
-import { VerifyToken } from "./user_service";
 import { Shop } from "../models/shop.model";
 import { Product } from "../models/product.model";
 import { User } from "../models/user.model";
+import { VerifyToken } from "./user_service";
 
-export const createShop = async (data: {
+const createShop = async (data: {
   token: string;
   data: { address: string; name: string; description: string };
 }) => {
@@ -13,6 +13,9 @@ export const createShop = async (data: {
     const { token } = data;
     const res = await VerifyToken(token);
     const user = JSON.parse(JSON.stringify(res)).user;
+    if (user === undefined) {
+      return new GraphQLError("Token Invalid or Expired, please login again.")
+    }
     const newShopData = {
       name,
       description,
@@ -30,13 +33,9 @@ export const createShop = async (data: {
   }
 };
 
-export const getAllShop = async (token: string) => {
+const getAllShop = async (token: string) => {
   try {
-    const res = await VerifyToken(token);
-    const user = JSON.parse(JSON.stringify(res)).user;
-    const shops = await Shop.find({})
-      .populate("owner products followers")
-      .sort({ createdAt: -1 });
+    const shops = await Shop.find({}).populate({path:"owner"}).populate({path:"products"}).populate({path:"followers"})
     if (shops.length <= 0) {
       return new GraphQLError("No Shop yet.");
     }
@@ -46,7 +45,7 @@ export const getAllShop = async (token: string) => {
   }
 };
 
-export const updateShop = async (data) => {
+const updateShop = async (data) => {
   try {
     let { token, data: payload } = data;
     const res = await VerifyToken(token);
@@ -61,7 +60,7 @@ export const updateShop = async (data) => {
       const { name, description, address } = payload;
       let updatedShop = await Shop.findByIdAndUpdate(
         { _id: id },
-        { name, description, address },
+        { ...payload },
         { new: true }
       ).populate("owner");
       if (updatedShop) {
@@ -74,12 +73,15 @@ export const updateShop = async (data) => {
   }
 };
 
-export const deleteShop = async (data: { id: string; token: string }) => {
+const deleteShop = async (data: { id: string; token: string }) => {
   try {
     const { id, token } = data;
     const res = await VerifyToken(token);
     const user = JSON.parse(JSON.stringify(res)).user;
     const shop = await Shop.findById(id).populate("owner");
+    if (!shop) {
+      return new GraphQLError(" Invalid Id,No shop found.");
+    }
     if (user._id.toString() === shop.owner._id.toString()) {
       //checking if any product is in this shop
       if (shop.products.length > 0) {
@@ -90,7 +92,7 @@ export const deleteShop = async (data: { id: string; token: string }) => {
       }
 
       //removing shop from all shop followers documents
-      if (shop.followers.length > 0) {
+      if (shop?.followers?.length > 0) {
         shop.followers.map(async (f) => {
           let user = await User.findById(f._id);
           const shopIndex = user.shops.findIndex(
@@ -110,3 +112,39 @@ export const deleteShop = async (data: { id: string; token: string }) => {
     return new GraphQLError(error.message);
   }
 };
+
+const followUnfollowShop = async (data) => {
+  try {
+    let { shopId, token } = data;
+    const res = await VerifyToken(token);
+    const user = JSON.parse(JSON.stringify(res)).user;
+    let shop = await Shop.findById({ _id: shopId }).populate("owner");
+    if (!shop) {
+      return new GraphQLError("Invalid shop Id, No shop found.");
+    }
+    if (!shop.owner._id === user._id) {
+      const isAlreadyFollwed = shop.followers?.findIndex(
+        (s) => s.toString() === user._id.toString()
+      );
+      console.log(shop.followers.length);
+      console.log("follow status", isAlreadyFollwed);
+
+      if (isAlreadyFollwed === -1) {
+        shop.followers.push(user._id);
+        await shop.save();
+
+        return "Shop followed successfully.";
+      } else {
+        shop.followers?.splice(isAlreadyFollwed, 1);
+        await shop.save();
+
+        return "Shop Unfollowed successfully.";
+      }
+    }else{
+      return "You can't follow your shop."
+    }
+  } catch (error) {
+    return new GraphQLError(error.message);
+  }
+};
+export { createShop, updateShop, deleteShop, getAllShop, followUnfollowShop };
