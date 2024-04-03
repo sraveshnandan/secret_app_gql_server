@@ -6,22 +6,32 @@ import { VerifyToken } from "./user_service";
 
 const createShop = async (data: {
   token: string;
-  data: { address: string; name: string; description: string };
+  data: { address: string; name: string; description: string; images: any[] };
 }) => {
   try {
-    const { name, description, address } = data.data;
+    const { name, description, address, images } = data.data;
     const { token } = data;
     const res = await VerifyToken(token);
     const user = JSON.parse(JSON.stringify(res)).user;
     if (user === undefined) {
-      return new GraphQLError("Token Invalid or Expired, please login again.")
+      return new GraphQLError("Token Invalid or Expired, please login again.");
     }
     const newShopData = {
       name,
       description,
       owner: user._id,
       address,
+      images,
     };
+
+    if (images === undefined) {
+      newShopData.images = [
+        {
+          public_id: "",
+          url: "",
+        },
+      ];
+    }
     let shop = await Shop.create(newShopData);
     let newuser = await User.findById(user._id);
     newuser.isShopOwner = true;
@@ -35,7 +45,10 @@ const createShop = async (data: {
 
 const getAllShop = async (token: string) => {
   try {
-    const shops = await Shop.find({}).populate({path:"owner"}).populate({path:"products"}).populate({path:"followers"})
+    const shops = await Shop.find({})
+      .populate({ path: "owner" })
+      .populate({ path: "products" })
+      .populate({ path: "followers" });
     if (shops.length <= 0) {
       return new GraphQLError("No Shop yet.");
     }
@@ -140,8 +153,8 @@ const followUnfollowShop = async (data) => {
 
         return "Shop Unfollowed successfully.";
       }
-    }else{
-      return "You can't follow your shop."
+    } else {
+      return "You can't follow your shop.";
     }
   } catch (error) {
     return new GraphQLError(error.message);
