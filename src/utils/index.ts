@@ -2,10 +2,9 @@ import os from "os";
 import { StatusSecret } from "../config";
 import { GraphQLError } from "graphql";
 
-
 type NextFunction = () => void;
 // Function to authenticate Server Crediential
-export const Authenticate = async (secretKey: string, next: NextFunction) => {
+const Authenticate = async (secretKey: string, next: NextFunction) => {
   if (secretKey === "hi") {
     return next();
   }
@@ -13,7 +12,7 @@ export const Authenticate = async (secretKey: string, next: NextFunction) => {
 };
 
 // Function to Get system information
-export const StatusInfo = (secret: string) => {
+const StatusInfo = (secret: string) => {
   const data = {
     os: os.hostname(),
     arch: os.arch(),
@@ -30,3 +29,13 @@ export const StatusInfo = (secret: string) => {
   }
   return data;
 };
+
+// Function to Generate OTP
+
+const GenerateOtp = () => {
+  const otp = Math.floor(100000 + Math.random() * 900000);
+  
+  return otp.toString();
+};
+
+export { Authenticate, StatusInfo, GenerateOtp };

@@ -202,6 +202,7 @@ type Query {
   shops:[Shop]
   #Product Query
   products:[Product]
+  sendOtp(email:String):Int
 }
 
 type Mutation {

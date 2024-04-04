@@ -4,6 +4,8 @@ import { PasswordInput, UserInput } from "../types";
 import { compareSync } from "bcrypt";
 import jwt from "jsonwebtoken";
 import { JWT_SECRET } from "../config";
+import { GenerateOtp } from "../utils";
+import { sendEmail } from "../lib";
 
 const createUser = async (data: UserInput) => {
   try {
@@ -19,7 +21,7 @@ const createUser = async (data: UserInput) => {
       };
     }
     data.phone_no = Number(phone_no);
-    console.log("Phone number", data.phone_no)
+    console.log("Phone number", data.phone_no);
     console.log("data", data);
     user = await User.create(data);
     return {
@@ -109,18 +111,41 @@ const updateProfile = async (data) => {
     const { token, details } = data;
     const res = await VerifyToken(token);
     const id = JSON.parse(JSON.stringify(res)).user._id;
-    let user = await User.findByIdAndUpdate({_id:id},{...details},{new:true});
+    let user = await User.findByIdAndUpdate(
+      { _id: id },
+      { ...details },
+      { new: true }
+    );
     if (user) {
-      console.log("UPdated User", user)
-      return "Profile Updated successfully."
-    }else{
-      return " Internal server error,Unable to update profile."
+      console.log("UPdated User", user);
+      return "Profile Updated successfully.";
+    } else {
+      return " Internal server error,Unable to update profile.";
     }
-
   } catch (error) {
     return new GraphQLError(error.message);
   }
 };
 
+const sendOtp = async (email: string) => {
+  try {
+    const otp = GenerateOtp();
+    const status = await sendEmail(email, "OTP VERIFICATION", otp);
+    if (status) {
+      return otp;
+    } else {
+      return new GraphQLError("Something went wrong, unable to send email");
+    }
+  } catch (error) {
+    return new GraphQLError(error.message);
+  }
+};
 // Update Profile function
-export { createUser, loginUser, VerifyToken, updatePassword, updateProfile };
+export {
+  createUser,
+  loginUser,
+  VerifyToken,
+  updatePassword,
+  updateProfile,
+  sendOtp,
+};

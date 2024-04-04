@@ -4,6 +4,7 @@ import {
   VerifyToken,
   createUser,
   loginUser,
+  sendOtp,
   updatePassword,
   updateProfile,
 } from "../service/user_service";
@@ -30,6 +31,12 @@ import {
 
 export const resolvers = {
   Query: {
+    sendOtp: async (_, { email }, context) => {
+      return await Authenticate(context.secret, async () => {
+        const res = await sendOtp(email);
+        return res;
+      });
+    },
     status: (_, { secret }) => {
       const res = StatusInfo(secret);
       if (res === null) {
