@@ -24,20 +24,11 @@ export const createCategory = async (data: { name: string; token: string }) => {
   }
 };
 
-export const getAllCategory = async (context) => {
-  try {
-    const { token } = context;
-    const res = await VerifyToken(token);
-    const user = JSON.parse(JSON.stringify(res)).user;
-
-    if (!user) {
-      return new GraphQLError("Unauthenticated, Please login to continue.");
-    }
-
+export const getAllCategory = async () => {
+  try { 
     const category = await Category.find({})
       .populate("createdBy")
       .sort({ createdAt: -1 });
-
     if (category.length <= 0) {
       return new GraphQLError("No category yet.");
     }

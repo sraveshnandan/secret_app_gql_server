@@ -56,7 +56,7 @@ export const resolvers = {
     },
     category: async (_, {}, context) => {
       return await Authenticate(context.secret, async () => {
-        return await getAllCategory(context);
+        return await getAllCategory();
       });
     },
     shops: async (_, {}, context) => {
