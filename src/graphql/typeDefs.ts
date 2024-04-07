@@ -196,6 +196,7 @@ type Query {
   #user query 
   login(data:UserInput): UserResponce
   profile:UserResponce
+  users:[User]
   #category query
   category:[Category]
   #Shop Query

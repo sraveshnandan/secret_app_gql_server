@@ -28,6 +28,7 @@ import {
   likeProduct,
   updateProduct,
 } from "../service/product_service";
+import { User } from "../models/user.model";
 
 export const resolvers = {
   Query: {
@@ -53,6 +54,14 @@ export const resolvers = {
     profile: async (_, {}, context) => {
       const res = await VerifyToken(context.token);
       return res;
+    },
+    users: async (_, {}, context) => {
+      return await Authenticate(context.secret, async () => {
+        const res = await User.find({})
+          .populate("shops")
+          .sort({ createdAt: -1 });
+        return res;
+      });
     },
     category: async (_, {}, context) => {
       return await Authenticate(context.secret, async () => {

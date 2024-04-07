@@ -130,12 +130,13 @@ const followUnfollowShop = async (data) => {
   try {
     let { shopId, token } = data;
     const res = await VerifyToken(token);
-    const user = JSON.parse(JSON.stringify(res)).user;
+    const userData = JSON.parse(JSON.stringify(res)).user;
     let shop = await Shop.findById({ _id: shopId }).populate("owner");
+    let user = await User.findById(userData._id);
     if (!shop) {
       return new GraphQLError("Invalid shop Id, No shop found.");
     }
-    if (!shop.owner._id === user._id) {
+    if (!shop.owner._id === userData._id) {
       const isAlreadyFollwed = shop.followers?.findIndex(
         (s) => s.toString() === user._id.toString()
       );
@@ -144,11 +145,18 @@ const followUnfollowShop = async (data) => {
 
       if (isAlreadyFollwed === -1) {
         shop.followers.push(user._id);
+        user.shops.push(shop._id);
+        await user.save();
         await shop.save();
 
         return "Shop followed successfully.";
       } else {
+        const shopIndex = user.shops.findIndex(
+          (s) => s._id.toString() === shop._id.toString()
+        );
         shop.followers?.splice(isAlreadyFollwed, 1);
+        user.shops.splice(shopIndex, 1);
+        await user.save();
         await shop.save();
 
         return "Shop Unfollowed successfully.";
