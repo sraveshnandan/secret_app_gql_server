@@ -131,12 +131,17 @@ const followUnfollowShop = async (data) => {
     let { shopId, token } = data;
     const res = await VerifyToken(token);
     const userData = JSON.parse(JSON.stringify(res)).user;
+
     let shop = await Shop.findById({ _id: shopId }).populate("owner");
     let user = await User.findById(userData._id);
+
     if (!shop) {
       return new GraphQLError("Invalid shop Id, No shop found.");
     }
-    if (!shop.owner._id === userData._id) {
+    const shopOwner = shop.owner._id.toString() === user._id.toString();
+
+    console.log("shop owner ", shopOwner);
+    if (!shopOwner) {
       const isAlreadyFollwed = shop.followers?.findIndex(
         (s) => s.toString() === user._id.toString()
       );
@@ -162,7 +167,7 @@ const followUnfollowShop = async (data) => {
         return "Shop Unfollowed successfully.";
       }
     } else {
-      return "You can't follow your shop.";
+      return new GraphQLError("You can't follow your own shop.");
     }
   } catch (error) {
     return new GraphQLError(error.message);

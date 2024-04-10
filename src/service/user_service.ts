@@ -65,7 +65,7 @@ const VerifyToken = async (token: string) => {
       const data = JSON.stringify(decode);
       const id = JSON.parse(data).id;
 
-      let user = await User.findById(id);
+      let user = await User.findById(id).populate("shops");
       if (!user || user === undefined) {
         return new GraphQLError(
           "Token invalid or expired, Please login again."
