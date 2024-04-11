@@ -102,7 +102,32 @@ const likeProduct = async (data) => {
     return new GraphQLError(error.message);
   }
 };
-const deleteProduct = async () => {};
+const deleteProduct = async (data: { productId: string; token: string }) => {
+  try {
+    const { productId, token } = data;
+    const res = await VerifyToken(token);
+    const user = JSON.parse(JSON.stringify(res)).user;
+    // finding product
+    let product = await Product.findById(productId).populate("owner");
+    let shop = await Shop.find({owner :user._id}).populate("owner")
+    if (!product) {
+      return new GraphQLError("Invalid id provided, No product found.");
+    }
+
+    const isowner = product.owner._id.toString() === user._id.toString();
+    console.log(product.owner)
+    console.log(shop)
+    console.log(user._id);
+    if (!isowner) {
+      return new GraphQLError("You are not authorised to perform this task.");
+    }else{
+      return "HI"
+    }
+    
+  } catch (error: any) {
+    return new GraphQLError(error.message);
+  }
+};
 
 export {
   createProduct,

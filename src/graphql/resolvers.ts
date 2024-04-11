@@ -24,6 +24,7 @@ import {
 } from "../service/shop_service";
 import {
   createProduct,
+  deleteProduct,
   getAllProduct,
   likeProduct,
   updateProduct,
@@ -193,6 +194,17 @@ export const resolvers = {
       };
       return await Authenticate(context.secret, async () => {
         const res = await likeProduct(payload);
+        return res;
+      });
+    },
+
+    deleteProduct: async (_, { productId }, context) => {
+      const payload = {
+        productId,
+        token: context.token,
+      };
+      return await Authenticate(context.secret, async () => {
+        const res = await deleteProduct(payload);
         return res;
       });
     },

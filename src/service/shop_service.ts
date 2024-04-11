@@ -141,7 +141,7 @@ const followUnfollowShop = async (data) => {
     const shopOwner = shop.owner._id.toString() === user._id.toString();
 
     console.log("shop owner ", shopOwner);
-    if (!shopOwner) {
+
       const isAlreadyFollwed = shop.followers?.findIndex(
         (s) => s.toString() === user._id.toString()
       );
@@ -166,9 +166,6 @@ const followUnfollowShop = async (data) => {
 
         return "Shop Unfollowed successfully.";
       }
-    } else {
-      return new GraphQLError("You can't follow your own shop.");
-    }
   } catch (error) {
     return new GraphQLError(error.message);
   }

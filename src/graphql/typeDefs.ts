@@ -224,6 +224,7 @@ type Mutation {
   createProduct(data:ProductInput):ProductResponce
   updateProduct(data:ProductInput):ProductResponce
   likeProduct(productId:ID!):String
+  deleteProduct(productId:ID!):String
 }
 
 `;
