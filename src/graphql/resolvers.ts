@@ -3,7 +3,9 @@ import { Authenticate, StatusInfo } from "../utils";
 import {
   VerifyToken,
   createUser,
+  forgotPassword,
   loginUser,
+  resetPassword,
   sendOtp,
   updatePassword,
   updateProfile,
@@ -56,6 +58,7 @@ export const resolvers = {
       const res = await VerifyToken(context.token);
       return res;
     },
+
     users: async (_, {}, context) => {
       return await Authenticate(context.secret, async () => {
         const res = await User.find({})
@@ -94,6 +97,26 @@ export const resolvers = {
       };
       return await Authenticate(context.secret, async () => {
         const res = await updateProfile(payload);
+        return res;
+      });
+    },
+    forgotPassword: async (_, { email }, context) => {
+      const payload = {
+        email,
+        token: context.token,
+      };
+      return await Authenticate(context.secret, async () => {
+        const res = await forgotPassword(payload);
+        return res;
+      });
+    },
+    resetPassword: async (_, { data }, context) => {
+      const payload = {
+        ...data,
+        token: context.token,
+      };
+      return await Authenticate(context.secret, async () => {
+        const res = await resetPassword(payload);
         return res;
       });
     },

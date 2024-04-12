@@ -190,6 +190,17 @@ input ProfileUpdateInput {
     data:Product
   }
 
+  type forgotPasswordResponce{
+    otp:String,
+    token:String
+  }
+
+  input resetPasswordInput{
+    token:String!
+    email:String!,
+    newPassword:String!
+  }
+
 
 type Query {
   status(secret:String):Status
@@ -211,6 +222,8 @@ type Mutation {
   createUser(data:UserInput):UserResponce
   updatePassword(data:PasswordInput):String
   updateProfile(data:ProfileUpdateInput):String
+  forgotPassword(email:String!):forgotPasswordResponce
+  resetPassword(data:resetPasswordInput):String
   #Category Mutations
   createCategory(name:String!):String,
   updateCategory(id:ID!,name:String!):String

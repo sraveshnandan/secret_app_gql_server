@@ -1,6 +1,29 @@
-import { Schema, model } from "mongoose";
+import { Schema, model, Document, Types } from "mongoose";
 
-const ReviewSchema = new Schema(
+interface IReview {
+  user: Types.ObjectId;
+  star: number;
+  message: string;
+}
+
+interface IProduct extends Document {
+  title: string;
+  description: string;
+  images: { public_id: string; url: string }[];
+  category: Types.ObjectId[];
+  original_price: number;
+  discount_price: number;
+  ratings: number;
+  reviews: IReview[];
+  extra: { name: string; value: string }[];
+  owner: Types.ObjectId;
+  likes: Types.ObjectId[];
+  views: number;
+  createdAt: Date;
+  updatedAt: Date;
+}
+
+const ReviewSchema = new Schema<IReview>(
   {
     user: {
       type: Schema.Types.ObjectId,
@@ -17,7 +40,8 @@ const ReviewSchema = new Schema(
   },
   { timestamps: true }
 );
-const ProductSchema = new Schema(
+
+const ProductSchema = new Schema<IProduct>(
   {
     title: {
       type: String,
@@ -76,4 +100,4 @@ const ProductSchema = new Schema(
   { timestamps: true }
 );
 
-export const Product = model("Product", ProductSchema);
+export const Product = model<IProduct>("Product", ProductSchema);

@@ -65,7 +65,7 @@ const sendEmail = async (
                 <td style="text-align: right;">
                   <span
                     style="font-size: 16px; line-height: 30px; color: #ffffff;"
-                    >${new Date(Date.now())}</span
+                    >${new Date(Date.now()).toDateString()}</span
                   >
                 </td>
               </tr>

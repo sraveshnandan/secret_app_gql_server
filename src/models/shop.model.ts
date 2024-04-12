@@ -1,17 +1,33 @@
+import { Types } from "mongoose";
 import { Schema, model } from "mongoose";
+import { Document } from "mongoose";
 
-const ShopSchema = new Schema(
+interface IShop extends Document {
+  name: string;
+  description: string;
+  images: { public_id: string; url: string }[];
+  products: Types.ObjectId[];
+  owner: Types.ObjectId;
+  followers: Types.ObjectId[];
+  location: { lat: number; long: number };
+  views: number;
+  address: string;
+  createdAt: Date;
+  updatedAt: Date;
+}
+
+const ShopSchema = new Schema<IShop>(
   {
     name: {
       type: String,
-      required: [true, "Shop name is required."],
-      minlength: [3, "Shop name must be at least 3 characters long."],
-      unique:[true, "Shop name should be unique."]
+      required: [true, "Shop Name is required."],
+      unique: true,
+      minlength: 3,
     },
     description: {
       type: String,
       required: [true, "Shop description is required."],
-      minlength: [10, "Shop description must be at least 10 charaters long."],
+      minlength: [10, "Shop description must be at least 10 characters long."],
     },
     images: [
       {
@@ -47,4 +63,4 @@ const ShopSchema = new Schema(
   { timestamps: true }
 );
 
-export const Shop = model("Shop", ShopSchema);
+export const Shop = model<IShop>("Shop", ShopSchema);

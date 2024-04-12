@@ -105,7 +105,7 @@ const updatePassword = async (data: PasswordInput, token: string) => {
     return new GraphQLError(error.message);
   }
 };
-
+// Update Profile function
 const updateProfile = async (data) => {
   try {
     const { token, details } = data;
@@ -140,7 +140,54 @@ const sendOtp = async (email: string) => {
     return new GraphQLError(error.message);
   }
 };
-// Update Profile function
+
+const forgotPassword = async (data: { email: string; token: string }) => {
+  try {
+    const { token, email } = data;
+    const otp = GenerateOtp();
+    let user = await User.findOne({ email });
+    if (!user) {
+      return new GraphQLError("Invalid email , No account found.");
+    }
+    const resetToken = jwt.sign({ user: user }, JWT_SECRET, {
+      expiresIn: "15d",
+    });
+    const status = await sendEmail(email, "Password rest OTP", otp);
+    if (status) {
+      const res = {
+        otp,
+        token: resetToken,
+      };
+      return res;
+    } else {
+      return new GraphQLError("Something went wrong, unable to send email");
+    }
+  } catch (error) {
+    return new GraphQLError(error.message);
+  }
+};
+
+const resetPassword = async (data: {
+  token: string;
+  email: string;
+  newPassword: string;
+}) => {
+  try {
+    const { email, token, newPassword } = data;
+    let user = await User.findOne({ email }).select("+password");
+    const decode: any = jwt.verify(token, JWT_SECRET);
+
+    if (!user._id === decode.id ) {
+      return new GraphQLError("invalid token, please tru again.")
+    }
+    user.password = newPassword;
+    await user.save();
+    return "Password Reset Successfull.";
+  } catch (error) {
+    return new GraphQLError(error.message);
+  }
+};
+
 export {
   createUser,
   loginUser,
@@ -148,4 +195,6 @@ export {
   updatePassword,
   updateProfile,
   sendOtp,
+  forgotPassword,
+  resetPassword,
 };

@@ -109,21 +109,29 @@ const deleteProduct = async (data: { productId: string; token: string }) => {
     const user = JSON.parse(JSON.stringify(res)).user;
     // finding product
     let product = await Product.findById(productId).populate("owner");
-    let shop = await Shop.find({owner :user._id}).populate("owner")
-    if (!product) {
-      return new GraphQLError("Invalid id provided, No product found.");
+    let shop = await Shop.findOne({ owner: user._id }).populate("owner");
+    // Error handling
+
+    if (!product && !shop) {
+      return new GraphQLError("Invalid Id, No product found.");
     }
 
-    const isowner = product.owner._id.toString() === user._id.toString();
-    console.log(product.owner)
-    console.log(shop)
-    console.log(user._id);
-    if (!isowner) {
-      return new GraphQLError("You are not authorised to perform this task.");
-    }else{
-      return "HI"
+    // Check if the user is the owner of the shop
+
+    if (shop?.owner?._id.toString() !== user._id.toString()) {
+      console.log("shop owner", shop.owner);
+      console.log("user", user._id);
+      return new GraphQLError("You are no authorise to perform this task")
     }
-    
+
+    // Remove product from shop's products array
+    const sId = shop._id;
+    await Shop.updateOne({ _id: sId }, { $pull: { products: productId } });
+
+    // Delete the product from the product collection
+    await Product.deleteOne({ _id: productId });
+
+    return "Product deleted successfully";
   } catch (error: any) {
     return new GraphQLError(error.message);
   }
