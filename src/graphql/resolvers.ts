@@ -112,8 +112,7 @@ export const resolvers = {
     },
     resetPassword: async (_, { data }, context) => {
       const payload = {
-        ...data,
-        token: context.token,
+        ...data
       };
       return await Authenticate(context.secret, async () => {
         const res = await resetPassword(payload);
