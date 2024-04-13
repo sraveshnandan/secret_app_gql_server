@@ -156,7 +156,7 @@ const forgotPassword = async (data: { email: string; token: string }) => {
     const resetToken = jwt.sign({ user: user }, JWT_SECRET, {
       expiresIn: "15d",
     });
-    const status = await sendEmail(email, "Password rest OTP", otp);
+    const status = await sendEmail(email, "Password reset OTP", otp);
     if (status) {
       const res = {
         otp,

@@ -23,7 +23,8 @@ const sendEmail = async (
       <meta charset="UTF-8" />
       <meta name="viewport" content="width=device-width, initial-scale=1.0" />
       <meta http-equiv="X-UA-Compatible" content="ie=edge" />
-      <title>Static Template</title>
+      <title>Email Template</title>
+  
       <link
         href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap"
         rel="stylesheet"
@@ -43,7 +44,7 @@ const sendEmail = async (
           margin: 0 auto;
           padding: 45px 30px 60px;
           background: #f4f7ff;
-          background-image: url(https://archisketch-resources.s3.ap-northeast-2.amazonaws.com/vrstyler/1661497957196_595865/email-template-background-banner);
+          background-image: url(/src/assets/bg.jpeg);
           background-repeat: no-repeat;
           background-size: 800px 452px;
           background-position: top center;
@@ -52,20 +53,15 @@ const sendEmail = async (
         "
       >
         <header>
-          <table style="width: 100%;">
+          <table style="width: 100%">
             <tbody>
-              <tr style="height: 0;">
+              <tr style="height: 0">
                 <td>
-                  <img
-                    alt=""
-                    src="https://archisketch-resources.s3.ap-northeast-2.amazonaws.com/vrstyler/1663574980688_114990/archisketch-logo"
-                    height="30px"
-                  />
+                  <img alt="" src="src/assets/logo.png" height="120px" />
                 </td>
-                <td style="text-align: right;">
-                  <span
-                    style="font-size: 16px; line-height: 30px; color: #ffffff;"
-                    >${new Date(Date.now()).toDateString()}</span
+                <td style="text-align: right">
+                  <span style="font-size: 16px; line-height: 30px; color: #ffffff"
+                    >12 Nov, 2021</span
                   >
                 </td>
               </tr>
@@ -84,7 +80,7 @@ const sendEmail = async (
               text-align: center;
             "
           >
-            <div style="width: 100%; max-width: 489px; margin: 0 auto;">
+            <div style="width: 100%; max-width: 489px; margin: 0 auto">
               <h1
                 style="
                   margin: 0;
@@ -103,7 +99,7 @@ const sendEmail = async (
                   font-weight: 500;
                 "
               >
-                Hey Tomy,
+                Hey Smart shop User,
               </p>
               <p
                 style="
@@ -113,12 +109,10 @@ const sendEmail = async (
                   letter-spacing: 0.56px;
                 "
               >
-                Thank you for choosing Peepal. Use the following OTP
-                to complete the procedure to change your email address. OTP is
-                valid for
-                <span style="font-weight: 600; color: #1f1f1f;">5 minutes</span>.
-                Do not share this code with others, including Archisketch
-                employees.
+                Thank you for choosing PEEPAL The Smart Shop Company. Use the
+                following OTP to complete the procedure. OTP is valid for
+                <span style="font-weight: 600; color: #1f1f1f">5 minutes</span>.
+                Do not share this code with others.
               </p>
               <p
                 style="
@@ -130,7 +124,7 @@ const sendEmail = async (
                   color: #ba3d4f;
                 "
               >
-               ${otp}
+                ${otp}
               </p>
             </div>
           </div>
@@ -148,14 +142,14 @@ const sendEmail = async (
             Need help? Ask at
             <a
               href="mailto:archisketch@gmail.com"
-              style="color: #499fb6; text-decoration: none;"
-              >archisketch@gmail.com</a
+              style="color: #499fb6; text-decoration: none"
+              >peepalthesmartshop@gmail.com</a
             >
             or visit our
             <a
               href=""
               target="_blank"
-              style="color: #499fb6; text-decoration: none;"
+              style="color: #499fb6; text-decoration: none"
               >Help Center</a
             >
           </p>
@@ -179,13 +173,13 @@ const sendEmail = async (
               color: #434343;
             "
           >
-            Archisketch Company
+            PEEPAL
           </p>
-          <p style="margin: 0; margin-top: 8px; color: #434343;">
-            Address 540, City, State.
+          <p style="margin: 0; margin-top: 8px; color: #434343">
+            PATNA, BIHAR, INDIA.
           </p>
-          <div style="margin: 0; margin-top: 16px;">
-            <a href="" target="_blank" style="display: inline-block;">
+          <div style="margin: 0; margin-top: 16px">
+            <a href="" target="_blank" style="display: inline-block">
               <img
                 width="36px"
                 alt="Facebook"
@@ -195,7 +189,7 @@ const sendEmail = async (
             <a
               href=""
               target="_blank"
-              style="display: inline-block; margin-left: 8px;"
+              style="display: inline-block; margin-left: 8px"
             >
               <img
                 width="36px"
@@ -205,7 +199,7 @@ const sendEmail = async (
             <a
               href=""
               target="_blank"
-              style="display: inline-block; margin-left: 8px;"
+              style="display: inline-block; margin-left: 8px"
             >
               <img
                 width="36px"
@@ -216,7 +210,7 @@ const sendEmail = async (
             <a
               href=""
               target="_blank"
-              style="display: inline-block; margin-left: 8px;"
+              style="display: inline-block; margin-left: 8px"
             >
               <img
                 width="36px"
@@ -224,7 +218,7 @@ const sendEmail = async (
                 src="https://archisketch-resources.s3.ap-northeast-2.amazonaws.com/vrstyler/1661503195931_210869/email-template-icon-youtube"
             /></a>
           </div>
-          <p style="margin: 0; margin-top: 16px; color: #434343;">
+          <p style="margin: 0; margin-top: 16px; color: #434343">
             Copyright © 2022 Company. All rights reserved.
           </p>
         </footer>
