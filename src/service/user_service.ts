@@ -1,6 +1,6 @@
 import { GraphQLError } from "graphql";
 import { User } from "../models/user.model";
-import { PasswordInput, UserInput } from "../types";
+import { UserInput } from "../types";
 import { compareSync } from "bcrypt";
 import jwt from "jsonwebtoken";
 import { JWT_SECRET } from "../config";
@@ -82,9 +82,13 @@ const VerifyToken = async (token: string) => {
   return new GraphQLError("Invalid or no token provided.");
 };
 
-const updatePassword = async (data: PasswordInput, token: string) => {
+const updatePassword = async (data: {
+  oldPassword: string;
+  newPassword: string;
+  token: string;
+}) => {
   try {
-    const { oldPassword, newPassword } = data;
+    const { oldPassword, newPassword, token } = data;
     const res = await VerifyToken(token);
     const id = JSON.parse(JSON.stringify(res)).user._id;
     let user = await User.findById(id).select("+password");
@@ -177,8 +181,8 @@ const resetPassword = async (data: {
     let user = await User.findOne({ email }).select("+password");
     const decode: any = jwt.verify(token, JWT_SECRET);
 
-    if (!user._id === decode.id ) {
-      return new GraphQLError("invalid token, please tru again.")
+    if (!user._id === decode.id) {
+      return new GraphQLError("invalid token, please tru again.");
     }
     user.password = newPassword;
     await user.save();

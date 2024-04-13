@@ -113,7 +113,7 @@ const sendEmail = async (
                   letter-spacing: 0.56px;
                 "
               >
-                Thank you for choosing Archisketch Company. Use the following OTP
+                Thank you for choosing Peepal. Use the following OTP
                 to complete the procedure to change your email address. OTP is
                 valid for
                 <span style="font-weight: 600; color: #1f1f1f;">5 minutes</span>.

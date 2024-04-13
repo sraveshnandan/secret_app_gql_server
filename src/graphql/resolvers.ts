@@ -88,7 +88,14 @@ export const resolvers = {
       return await createUser(data);
     },
     updatePassword: async (_, { data }, context) => {
-      await updatePassword(data, context.token);
+      const payload = {
+        ...data,
+        token: context.token,
+      };
+      return await Authenticate(context.secret, async () => {
+        const res = await updatePassword(payload);
+        return res;
+      });
     },
     updateProfile: async (_, { data }, context) => {
       const payload = {
@@ -112,7 +119,7 @@ export const resolvers = {
     },
     resetPassword: async (_, { data }, context) => {
       const payload = {
-        ...data
+        ...data,
       };
       return await Authenticate(context.secret, async () => {
         const res = await resetPassword(payload);
