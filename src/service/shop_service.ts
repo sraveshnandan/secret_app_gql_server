@@ -142,30 +142,30 @@ const followUnfollowShop = async (data) => {
 
     console.log("shop owner ", shopOwner);
 
-      const isAlreadyFollwed = shop.followers?.findIndex(
-        (s) => s.toString() === user._id.toString()
+    const isAlreadyFollwed = shop.followers?.findIndex(
+      (s) => s.toString() === user._id.toString()
+    );
+    console.log(shop.followers.length);
+    console.log("follow status", isAlreadyFollwed);
+
+    if (isAlreadyFollwed === -1) {
+      shop.followers.push(user._id);
+      user.shops.push(shop._id);
+      await user.save();
+      await shop.save();
+
+      return "Shop followed successfully.";
+    } else {
+      const shopIndex = user.shops.findIndex(
+        (s) => s._id.toString() === shop._id.toString()
       );
-      console.log(shop.followers.length);
-      console.log("follow status", isAlreadyFollwed);
+      shop.followers?.splice(isAlreadyFollwed, 1);
+      user.shops.splice(shopIndex, 1);
+      await user.save();
+      await shop.save();
 
-      if (isAlreadyFollwed === -1) {
-        shop.followers.push(user._id);
-        user.shops.push(shop._id);
-        await user.save();
-        await shop.save();
-
-        return "Shop followed successfully.";
-      } else {
-        const shopIndex = user.shops.findIndex(
-          (s) => s._id.toString() === shop._id.toString()
-        );
-        shop.followers?.splice(isAlreadyFollwed, 1);
-        user.shops.splice(shopIndex, 1);
-        await user.save();
-        await shop.save();
-
-        return "Shop Unfollowed successfully.";
-      }
+      return "Shop Unfollowed successfully.";
+    }
   } catch (error) {
     return new GraphQLError(error.message);
   }
