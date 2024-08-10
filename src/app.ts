@@ -7,24 +7,23 @@ import { MongoDbUri, Port } from "./config";
 const server = new ApolloServer({
   typeDefs,
   resolvers,
+
 });
 
-const startServer = async () => {
-  console.log(`Connecting to Database.....`);
- 
+const startGrapQlServer = async () => {
+  console.log("connecting to the database.")
   mongoose
-    .set("strictPopulate", false)
     .connect(MongoDbUri)
     .then(async (con) => {
       console.log(`📡 Databse is connected to : ${con.connection.host}`);
       console.log(`Starting GraphQl Server.`);
-      
       const { url } = await startStandaloneServer(server, {
         listen: { port: Number(Port) },
         context: async ({ req, res }) => {
           return req.headers;
         },
       });
+
       console.log(`🔗 Graphql Server is running on :${url}`);
     })
     .catch((error) =>
@@ -32,4 +31,4 @@ const startServer = async () => {
     );
 };
 
-startServer();
+startGrapQlServer();
